@@ -50,11 +50,11 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON("Election.json", function(election) {
+    $.getJSON("AuditoriaObras.json", function(election) {
       // Instantiate a new truffle contract from the artifact
-      App.contracts.Election = TruffleContract(election);
+      App.contracts.AuditoriaObras = TruffleContract(election);
       // Connect provider to interact with contract
-      App.contracts.Election.setProvider(App.web3Provider);
+      App.contracts.AuditoriaObras.setProvider(App.web3Provider);
       //Init event listener
       App.listenForEvents();
 
@@ -79,47 +79,63 @@ App = {
   });
 
   // Load contract data
-  App.contracts.Election.deployed().then(function(instance) {
+  App.contracts.AuditoriaObras.deployed().then(function(instance) {
     electionInstance = instance;
-    return electionInstance.candidatesCount();
-  }).then(function(candidatesCount) {
+    return electionInstance.obrasCivilesCount();
+  }).then(function(obrasCivilesCount) {
     var candidatesResults = $("#candidatesResults");
     candidatesResults.empty();
     $("#candidatesResults tr").remove();
     var candidatesSelect = $('#candidatesSelect');
     candidatesSelect.empty();
 
-    for (var i = 1; i <= candidatesCount; i++) {
-      electionInstance.candidates(i).then(function(candidate) {
-        var id = candidate[0];
-        var name = candidate[1];
-        var voteCount = candidate[2];
+    for (var i = 1; i <= obrasCivilesCount; i++) {
+      electionInstance.obrasCiviles(i).then(function(obraCivil) {
+        var id = obraCivil[0];
+        var name = obraCivil[1];
+        var voteCountPos = obraCivil[2];
+        var voteCountNeg = obraCivil[3];
+        var voteRequired = obraCivil[4];
+        var walletContra = obraCivil[5];
+        var nameContra = obraCivil[6];
+        var valorContrato = obraCivil[7]/Math.pow(10,18);
+        var fechaIni = obraCivil[8];
+        var fechaFin = obraCivil[9];
 
-        // Render candidate Result
-        var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
+        // Render obraCivil Result
+        var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + nameContra + "</td><td>"+voteCountPos+"</td><td>"+voteCountNeg+"</td><td>"+voteRequired+"</td><td>"+valorContrato+"</td><td>"+fechaIni+"</td><td>"+fechaFin+"</td></tr>"
         candidatesResults.append(candidateTemplate);
-
-        // Render candidate ballot option
-        var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
-        candidatesSelect.append(candidateOption);
+        
+        electionInstance.voters(App.account,id).then(function(hasVoted){
+          //console.log(hasVoted);
+          if(!hasVoted){
+            var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
+            candidatesSelect.append(candidateOption);
+          }
+        }
+        );
+       
+        loader.hide();
+        content.show();
       });
     }
-    return electionInstance.voters(App.account);
-  }).then(function(hasVoted) {
+    //return electionInstance.voters(App.account);
+  })/*.then(function(votante) {
     // Do not allow a user to vote
-    if(hasVoted) {
-      $('form').hide();
-    }
+    //if(votante) {
+     // $('form').hide();
+    //}
     loader.hide();
     content.show();
-  }).catch(function(error) {
+  })*/
+  .catch(function(error) {
     console.warn(error);
   });
 },
  castVote: function() {
     var candidateId = $('#candidatesSelect').val();
-    App.contracts.Election.deployed().then(function(instance) {
-      return instance.vote(candidateId, { from: App.account });
+    App.contracts.AuditoriaObras.deployed().then(function(instance) {
+      return instance.vote(candidateId, true,{ from: App.account });
     }).then(function(result) {
       // Wait for votes to update
       $("#content").hide();
@@ -130,7 +146,7 @@ App = {
   },
 
   listenForEvents: function() {
-  App.contracts.Election.deployed().then(function(instance) {
+  App.contracts.AuditoriaObras.deployed().then(function(instance) {
     instance.votedEvent({}, {
       fromBlock: 0,
       toBlock: 'latest'

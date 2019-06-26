@@ -1,28 +1,33 @@
-var Election = artifacts.require("./Election.sol");
+var AuditoriaObras = artifacts.require("./AuditoriaObras.sol");
 
-contract("Election", function(accounts) {
+contract("AuditoriaObras", function(accounts) {
   var electionInstance;
 
-  it("initializes with two candidates", function() {
-    return Election.deployed().then(function(instance) {
-      return instance.candidatesCount();
+  it("Inicializa la obras", function() {
+    return AuditoriaObras.deployed().then(function(instance) {
+      return instance.obrasCivilesCount();
     }).then(function(count) {
-      assert.equal(count, 2);
+      assert.equal(count, 3);
     });
   });
 
-  it("it initializes the candidates with the correct values", function() {
-    return Election.deployed().then(function(instance) {
+  it("it obras inicializadas de forma correcta", function() {
+    return AuditoriaObras.deployed().then(function(instance) {
       electionInstance = instance;
-      return electionInstance.candidates(1);
+      return electionInstance.obrasCiviles(1);
     }).then(function(candidate) {
       assert.equal(candidate[0], 1, "contains the correct id");
-      assert.equal(candidate[1], "Pedrinchi el mazimo", "contains the correct name");
+      assert.equal(candidate[1], "Ampliacion hospital Kennedy", "contains the correct name");
       assert.equal(candidate[2], 0, "contains the correct votes count");
-      return electionInstance.candidates(2);
+      return electionInstance.obrasCiviles(2);
     }).then(function(candidate) {
       assert.equal(candidate[0], 2, "contains the correct id");
-      assert.equal(candidate[1], "El corrupto del barrio", "contains the correct name");
+      assert.equal(candidate[1], "Cinemateca Distrital", "contains the correct name");
+      assert.equal(candidate[2], 0, "contains the correct votes count");
+      return electionInstance.obrasCiviles(3);
+    }).then(function(candidate) {
+      assert.equal(candidate[0], 3, "contains the correct id");
+      assert.equal(candidate[1], "UPA (Unidad Primaria de Atencion) Antonio Nariño", "contains the correct name");
       assert.equal(candidate[2], 0, "contains the correct votes count");
     });
   });
@@ -43,7 +48,7 @@ contract("Election", function(accounts) {
     })
   });*/
 
-it("allows a voter to cast a vote", function() {
+/*it("allows a voter to cast a vote", function() {
   return Election.deployed().then(function(instance) {
     electionInstance = instance;
     candidateId = 1;
@@ -77,7 +82,7 @@ it("allows a voter to cast a vote", function() {
       var voteCount = candidate2[2];
       assert.equal(voteCount, 0, "candidate 2 did not receive any votes");
     });
-  });
+  });*/
 
   
 
