@@ -58,7 +58,8 @@ contract AuditoriaObras {
         else
             obrasCiviles[idObra].cantVotosContra ++;
     	// trigger voted event
-    	emit votedEvent(idObra);
+        if(idObra > 0 && idObra <= obrasCivilesCount)
+    	   emit votedEvent(idObra);
     }
 
     event votedEvent(

@@ -38,13 +38,17 @@
               </tbody>
             </table>
             <hr/>
-            <form onSubmit="App.castVote(); return false;">
+            <form onsubmit="App.castVote(); return false;">
               <div class="form-group">
                 <label for="candidatesSelect">Select Candidate</label>
                 <select class="form-control" id="candidatesSelect">
                 </select>
               </div>
-              <button type="submit" class="btn btn-primary">Vote</button>
+              <div class="form-group">
+                <p class="text-center">¿Esta de acuerdo que se le pague al contratista por la obra realizada?</p>
+                <button style ="margin-left:47%;background-color: #078A27" type="submit" class="btn btn-primary" value="true">Si</button>
+                <button style="background-color: #C62027" type="submit" class="btn btn-primary" value="false">No</button>
+              </div>
               <hr />
             </form>
             <p id="accountAddress" class="text-center"></p>

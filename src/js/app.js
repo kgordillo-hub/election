@@ -88,7 +88,6 @@ App = {
     $("#candidatesResults tr").remove();
     var candidatesSelect = $('#candidatesSelect');
     candidatesSelect.empty();
-
     for (var i = 1; i <= obrasCivilesCount; i++) {
       electionInstance.obrasCiviles(i).then(function(obraCivil) {
         var id = obraCivil[0];
@@ -133,9 +132,10 @@ App = {
   });
 },
  castVote: function() {
+    var botonSeleccionado = (document.activeElement.getAttribute('value')=='true');
     var candidateId = $('#candidatesSelect').val();
     App.contracts.AuditoriaObras.deployed().then(function(instance) {
-      return instance.vote(candidateId, true,{ from: App.account });
+      return instance.vote(candidateId, botonSeleccionado,{ from: App.account });
     }).then(function(result) {
       // Wait for votes to update
       $("#content").hide();
@@ -153,7 +153,8 @@ App = {
     }).watch(function(error, event) {
       console.log("event triggered", event)
       // Reload when a new vote is recorded
-      App.render();
+      //App.render();
+      //location.reload();
     });
   });
 }
