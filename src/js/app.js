@@ -88,6 +88,7 @@ App = {
     $("#candidatesResults tr").remove();
     var candidatesSelect = $('#candidatesSelect');
     candidatesSelect.empty();
+    var cantidadElementos=0;
     for (var i = 1; i <= obrasCivilesCount; i++) {
       electionInstance.obrasCiviles(i).then(function(obraCivil) {
         var id = obraCivil[0];
@@ -102,7 +103,7 @@ App = {
         var fechaFin = obraCivil[9];
 
         // Render obraCivil Result
-        var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + nameContra + "</td><td>"+voteCountPos+"</td><td>"+voteCountNeg+"</td><td>"+voteRequired+"</td><td>"+valorContrato+"</td><td>"+fechaIni+"</td><td>"+fechaFin+"</td></tr>"
+        var candidateTemplate = "<tr id=obra_"+id +"><th>" + id + "</th><td>" + name + "</td><td>" + nameContra + "</td><td>"+voteCountPos+"</td><td>"+voteCountNeg+"</td><td>"+voteRequired+"</td><td>"+valorContrato+"</td><td>"+fechaIni+"</td><td>"+fechaFin+"</td></tr>"
         candidatesResults.append(candidateTemplate);
         
         electionInstance.voters(App.account,id).then(function(hasVoted){
@@ -110,23 +111,28 @@ App = {
           if(!hasVoted){
             var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
             candidatesSelect.append(candidateOption);
+            cantidadElementos=cantidadElementos+1;
+            
+          }
+          //console.log(cantidadElementos);
+          if(cantidadElementos==0){
+            $('form').hide();
           }
         }
         );
-       
+
+      });
+      
+    }    
+    return cantidadElementos;
+  }).then(function(cantidadElementos) {
+    //console.log(cantidadElementos);
+        /*if(candidatesSelect.length==1){
+            $('form').hide();
+          }*/
         loader.hide();
         content.show();
-      });
-    }
-    //return electionInstance.voters(App.account);
-  })/*.then(function(votante) {
-    // Do not allow a user to vote
-    //if(votante) {
-     // $('form').hide();
-    //}
-    loader.hide();
-    content.show();
-  })*/
+  })
   .catch(function(error) {
     console.warn(error);
   });
@@ -150,11 +156,49 @@ App = {
     instance.votedEvent({}, {
       fromBlock: 0,
       toBlock: 'latest'
-    }).watch(function(error, event) {
-      console.log("event triggered", event)
+    }).watch(function(error, event) {      
+      //console.log("event triggered", event.args.idObra.c[0]);
+      var id_contrato =  event.args.idObra.c[0];
       // Reload when a new vote is recorded
-      //App.render();
-      //location.reload();
+       //App.render();
+       App.contracts.AuditoriaObras.deployed().then(
+          function(instance){
+            electionInstance = instance;
+            electionInstance.obrasCiviles(id_contrato).then(
+                function(obraCivil){
+                  var loader = $("#loader");
+                  var content = $("#content");
+                  var id = obraCivil[0];
+                  var name = obraCivil[1];
+                  var voteCountPos = obraCivil[2];
+                  var voteCountNeg = obraCivil[3];
+                  var voteRequired = obraCivil[4];
+                  var walletContra = obraCivil[5];
+                  var nameContra = obraCivil[6];
+                  var valorContrato = obraCivil[7]/Math.pow(10,18);
+                  var fechaIni = obraCivil[8];
+                  var fechaFin = obraCivil[9];
+                  var candidateTemplate = "<tr id="+id +"><th>" + id + "</th><td>" + name + "</td><td>" + nameContra + "</td><td>"+voteCountPos+"</td><td>"+voteCountNeg+"</td><td>"+voteRequired+"</td><td>"+valorContrato+"</td><td>"+fechaIni+"</td><td>"+fechaFin+"</td></tr>"
+                  $("#obra_"+id).replaceWith(candidateTemplate);
+                  electionInstance.voters(App.account,id).then(function(hasVoted){
+                    //candidatesSelect.empty();
+                    //console.log(hasVoted);
+                    if(hasVoted){
+                      var candidatesSelect = $("#candidatesSelect option[value='"+id+"']");
+                      //var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
+                      candidatesSelect.remove();
+                    }else{
+                      var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
+                      candidatesSelect.append(candidateOption);
+                    }
+                  });
+
+                  loader.hide();
+                  content.show();
+                }
+              );
+          }
+        );
     });
   });
 }

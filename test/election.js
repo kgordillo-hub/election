@@ -32,6 +32,15 @@ contract("AuditoriaObras", function(accounts) {
     });
   });
 
+  it("pagar ethers", function(){
+    return AuditoriaObras.deployed().then(
+        function(instance){
+            electionInstance = instance;
+            electionInstance.pagarContrato(10);
+        }
+    );
+  });
+
   /*it("allows a voter to cast a vote", function() {
     return Election.deployed().then(function(instance) {
       electionInstance = instance;
