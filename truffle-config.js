@@ -1,5 +1,5 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var mnemonic = "inspire staff omit remain spirit regular allow reflect capable wasp tray topple";
+var mnemonic = "inspire staff...";
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
