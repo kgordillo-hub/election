@@ -24,3 +24,7 @@ npm run dev
 ## Basados en
 
 * [Dapp university] (http://www.dappuniversity.com/articles/the-ultimate-ethereum-dapp-tutorial) - se usó como guía el tutorial indicado.
+
+## License
+
+This project is licensed under the The MIT License (MIT)
