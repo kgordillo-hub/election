@@ -8,7 +8,7 @@ truffle migrate --reset
 
 ## Despliegue en Ropsten
 
-truffle deploy --reset ropsten
+truffle deploy --reset --network ropsten
 
 ## Correr aplicación
 
@@ -23,7 +23,7 @@ npm run dev
 
 ## Basados en
 
-* [Dapp university] (http://www.dappuniversity.com/articles/the-ultimate-ethereum-dapp-tutorial) - se usó como guía el tutorial indicado.
+* [Dapp university](http://www.dappuniversity.com/articles/the-ultimate-ethereum-dapp-tutorial) - se usó como guía el tutorial indicado.
 
 ## License
 
